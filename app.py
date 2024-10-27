@@ -166,23 +166,23 @@ def get_trs_calculator():
                               sandbox_data["penalty_rate_per_year"]))
 
 
-@app.route('/api/trs_calculator/', methods=['POST'])
-def post_trs_calculator():
+@app.route('/api/403b_calculator/', methods=['POST'])
+def post_403b_calculator():
     # TODO: Look for data if exists, update, else create
-    return redirect(url_for("/api/trs_calculator/"))
-
-
-
-
-@app.route('/api/403b_calculator/', methods=['GET'])
-def get_403b_calculator():
-    sandbox_data=None
-    return jsonify(trs_retirement_calculator(sandbox_data["current_age"],
+    sandbox_data=request.json
+    result=retirement_403b_calculator(sandbox_data["current_age"],
                               sandbox_data["retirement_age"],
-                              sandbox_data["current_403b_balance"],
+                              sandbox_data["current_balance"],
                               sandbox_data["current_salary"],
                               sandbox_data["annual_growth_rate"],
-                              sandbox_data["penalty_rate_per_year"]))
+                              sandbox_data["penalty_rate_per_year"],
+                              sandbox_data["annual_contribution_percentage"],
+                              sandbox_data["employer_match_percentage"],
+                              sandbox_data["expected_annual_return"],
+                              sandbox_data["annual_salary_growth_rate"],
+                              sandbox_data["annual_investment_fee_rate"],
+                              sandbox_data["max_out"])
+    return jsonify(result)
 
 
 @app.route('/dashboard')
@@ -206,3 +206,32 @@ def chart_data():
         "barChartData": bar_data,
         "pieChartData": pie_data
     })
+                 
+
+
+@app.route('/post_roth_ira_calculate', methods=['POST'])
+def post_roth_ira_calculate():
+    starting_balance = float(request.form['starting_balance'])
+    annual_contribution = float(request.form['annual_contribution'])
+    current_age = int(request.form['current_age'])
+    retirement_age = int(request.form['retirement_age'])
+    rate_of_return = float(request.form['rate_of_return'])
+    tax_rate = float(request.form['tax_rate'])
+    maximize_contributions = 'maximize_contributions' in request.form
+
+    balances, total_contributions, ira_total_at_retirement, taxable_amount = roth_ira_calculator(
+        starting_balance,
+        annual_contribution,
+        current_age,
+        retirement_age,
+        rate_of_return,
+        tax_rate,
+        maximize_contributions
+    )
+
+    return jsonify({
+        'balances': balances,
+        'total_contributions': total_contributions,
+        'ira_total_at_retirement': ira_total_at_retirement,
+        'taxable_amount': taxable_amount
+    })    

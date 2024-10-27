@@ -50,3 +50,43 @@ def retirement_403b_calculator(
         yearly_data["current_balance_with_employee_match"]=yearly_data["total_contribution"]*(1+expected_annual_return-annual_investment_fee_rate)
         yearly_data["current_withdraw_amount"]=yearly_data["current_balance_with_employee_match"](1+(0 if age>59 else -0.1))
         report_data.append(yearly_data)
+
+
+def roth_ira_calculator(
+    starting_balance, 
+    annual_contribution, 
+    current_age, retirement_age, 
+    rate_of_return, tax_rate, maximize_contributions
+):
+    # Constants
+    MAX_CONTRIBUTION = 7000  # 2024 max contribution limit
+    CATCH_UP_CONTRIBUTION = 1000  # Catch-up contribution for age 50 and over
+    CATCH_UP_AGE = 50
+
+        balances = []
+    ira_balance = starting_balance
+    taxable_account = 0
+    total_contributions = 0
+
+    for age in range(current_age, retirement_age):
+        if maximize_contributions:
+            annual_contribution = MAX_CONTRIBUTION
+            if age >= CATCH_UP_AGE:
+                annual_contribution += CATCH_UP_CONTRIBUTION
+
+        # Update total contributions
+        total_contributions += annual_contribution
+
+        # IRA balance calculation
+        ira_balance = ira_balance * (1 + rate_of_return / 100) + annual_contribution
+
+        # Taxable account balance calculation
+        taxable_account = (taxable_account + annual_contribution) * (1 + rate_of_return / 100) * (1 - tax_rate / 100)
+
+        # Append data for the current year
+        balances.append({
+            'age': age + 1,  # Increment age to represent the year-end age
+            'ira_contribution': annual_contribution,
+            'ira_balance': round(ira_balance, 2),
+            'taxable_account': round(taxable_account * 2, 2)  # Multiply by 2
+        })
