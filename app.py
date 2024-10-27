@@ -1,22 +1,22 @@
+import os
 import random
 
 from flask import Flask, jsonify, request,redirect,url_for, current_app, g
-from util import trs_retirement_calculator,retirement_403b_calculator
+from util import trs_retirement_calculator,retirement_403b_calculator, roth_ira_calculator
 from flask_pymongo import PyMongo
 from werkzeug.local import LocalProxy
 from urllib.parse import quote_plus
 from bson.objectid import ObjectId
 from os import environ as env
 import json
-from os import environ as env
 from urllib.parse import quote_plus, urlencode
 
 from authlib.integrations.flask_client import OAuth
 from dotenv import find_dotenv, load_dotenv
 from flask import Flask, redirect, render_template, session, url_for
 
-username = quote_plus('udaykiranchimpiri')
-password = quote_plus('HackUNT123')
+username = quote_plus(env.get("MONGO_USERNAME"))
+password = quote_plus(env.get("MONGO_PASSWORD"))
 
 uri = f"mongodb+srv://{username}:{password}@cluster0.omdcv.mongodb.net/db-fidelity?retryWrites=true&w=majority"
 
@@ -191,23 +191,7 @@ def dashboard():
         return render_template('dashboard.html')
     else:
         return redirect(url_for('login'))
-
-
-@app.route('/api/chart-data', methods=['GET'])
-def chart_data():
-    # Generate some example data
-    line_data = [random.randint(50, 100) for _ in range(6)]
-    bar_data = [random.randint(20, 60) for _ in range(4)]
-    pie_data = [random.randint(100, 300) for _ in range(3)]
-
-    # Return data as JSON
-    return jsonify({
-        "lineChartData": line_data,
-        "barChartData": bar_data,
-        "pieChartData": pie_data
-    })
-                 
-
+                
 
 @app.route('/post_roth_ira_calculate', methods=['POST'])
 def post_roth_ira_calculate():

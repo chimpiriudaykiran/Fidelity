@@ -39,7 +39,7 @@ def retirement_403b_calculator(
     max_out:float=True
 ):
     report_data=[]
-    for age in range(age+1,retirement_age+1):
+    for age in range(current_age+1,retirement_age+1):
         yearly_data=dict()
         yearly_data["age"]=age
         yearly_data["current_salary"]=current_salary*(1+annual_salary_growth_rate)**(age-current_age)
@@ -53,9 +53,9 @@ def retirement_403b_calculator(
 
 
 def roth_ira_calculator(
-    starting_balance, 
-    annual_contribution, 
-    current_age, retirement_age, 
+    starting_balance,
+    annual_contribution,
+    current_age, retirement_age,
     rate_of_return, tax_rate, maximize_contributions
 ):
     # Constants
@@ -63,7 +63,7 @@ def roth_ira_calculator(
     CATCH_UP_CONTRIBUTION = 1000  # Catch-up contribution for age 50 and over
     CATCH_UP_AGE = 50
 
-        balances = []
+    balances = []
     ira_balance = starting_balance
     taxable_account = 0
     total_contributions = 0
