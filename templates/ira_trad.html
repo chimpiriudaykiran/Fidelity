@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IRA Roth Calculator</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/403bstyles.css') }}">
+   <script src="{{ url_for('static', filename='js/tradscript.js') }}" defer></script>
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<style>
+    /* For Chrome, Edge, and Safari */
+    ::-webkit-scrollbar {
+        width: 6px; /* Slim width */
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent; /* Hide track */
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #888; /* Scroll thumb color */
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555; /* Thumb color on hover */
+    }
+
+    /* For Firefox */
+    * {
+        scrollbar-width: thin; /* Slim scrollbar */
+        scrollbar-color: #888 transparent; /* Only show thumb color */
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    /* Set the gradient background for the whole page */
+    body {
+        /* Background gradient with a very dark blue (#0a0b2b) near black at the top */
+        background: linear-gradient(to bottom, #0a0b2b, #1a1d4e); /* Gradient background */
+        background-size: cover;
+        background-position: center;
+        color: white;
+        font-family: Arial, sans-serif;
+        min-height: 100vh; /* Ensure full viewport height */
+    }
+
+    /* Style the navbar */
+    .navbar {
+        background-color: rgba(0, 0, 0, 0.3); /* Semi-transparent black background for navbar */
+        padding: 1em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Style the nav links */
+    .navbar button {
+        color: orange; /* Text color for links */
+        text-decoration: none;
+        margin: 0 15px;
+        padding: 10px 15px;
+        font-weight: bold;
+        transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+    }
+
+    /* Hover effect for nav links */
+    .navbar button:hover {
+        background-color: orange; /* Change background on hover */
+        color: black; /* Change text color on hover */
+        border-radius: 5px;
+    }
+</style>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <button type="button" class="nav-link" data-bs-toggle="modal" data-bs-target="#step1Modal">Employee
+                            Details
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="nav-link" href="#trs-calculator">TRS Calculator</button>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="nav-link" href="#403b-calculator">403(b) Calculator</button>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="nav-link" href="#ira-calculator">IRA Calculator</button>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="nav-link" onclick="window.location.href='/logout'">Logout</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+<div class="container">
+    <!-- Left Section: Form -->
+    <div class="form-section">
+        <h1>IRA Traditional Calculator</h1>
+
+        <div class="form-group">
+            <label for="current_age">Current Age:</label>
+            <input type="number" id="current_age" name="current_age" min="0" max="100" value="32">
+        </div>
+
+        <div class="form-group">
+            <label for="retirement_age">Retirement Age:</label>
+            <input type="number" id="retirement_age" name="retirement_age" min="0" max="100" value="65">
+        </div>
+
+        <div class="form-group">
+            <label for="current_balance">Current Balance ($):</label>
+            <input type="number" id="current_balance" name="current_balance" min="0" max="100000" step="1000" value="20000">
+        </div>
+
+        <div class="form-group">
+            <label for="current_salary">Current Salary ($):</label>
+            <input type="number" id="current_salary" name="current_salary" min="10000" max="1000000" step="1000" value="60000">
+        </div>
+
+        <div class="form-group">
+            <label for="annual_contribution_percentage">Annual Contribution (%)</label>
+            <input type="number" id="annual_contribution_percentage" name="annual_contribution_percentage" min="0" max="100" value="10">
+        </div>
+        <div class="form-group">
+            <label for="expected_annual_return">Expected Annual Return (%)</label>
+            <input type="number" id="expected_annual_return" name="expected_annual_return" min="0" max="10" step="0.1" value="5">
+        </div>
+
+        <div class="form-group">
+            <label for="annual_salary_growth_rate">Annual Salary Growth Rate (%)</label>
+            <input type="number" id="annual_salary_growth_rate" name="annual_salary_growth_rate" min="0" max="10" step="0.1" value="3">
+        </div>
+
+        <div class="form-group">
+            <label for="annual_tax_rate">Annual Tax Rate</label>
+            <input type="number" id="annual_tax_rate" name="annual_tax_rate" min="0" max="50" step="0.1" value="10">
+        </div>
+
+        <div class="form-group">
+            <label for="max_out">Max Out Contributions:</label>
+            <input type="checkbox" id="max_out" name="max_out">
+        </div>
+
+        <!-- Buttons: Calculate and Generate Report -->
+        <div class="button-container">
+            <button type="button" name="calculate_button" id="calculate_button">Calculate</button>
+        </div>
+    </div>
+
+    <!-- Right Section: Graph Placeholder -->
+    <div class="graph-section">
+        <div id="dropdownContainer">
+        </div>
+        <svg id="chart"></svg>
+    </div>
+</div>
+<div class="report-section" id="reportSection">
+    <h2>Report</h2>
+    <table id="reportTable">
+        <thead>
+            <tr id="reportHeader">
+                <!-- Header cells will be dynamically generated -->
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be dynamically generated -->
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
