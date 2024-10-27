@@ -53,40 +53,40 @@ def retirement_403b_calculator(
 
 
 def roth_ira_calculator(
-    starting_balance,
-    annual_contribution,
-    current_age, retirement_age,
-    rate_of_return, tax_rate, maximize_contributions
+    current_age, 
+    retirement_age, 
+    current_balance,
+    current_salary,
+    annual_contribution_percentage,
+    expected_annual_return, 
+    annual_salary_growth_rate, 
+    annual_tax_rate, max_out
 ):
     # Constants
     MAX_CONTRIBUTION = 7000  # 2024 max contribution limit
     CATCH_UP_CONTRIBUTION = 1000  # Catch-up contribution for age 50 and over
     CATCH_UP_AGE = 50
-
     balances = []
-    ira_balance = starting_balance
-    taxable_account = 0
+    ira_balance = current_balance
     total_contributions = 0
 
-    for age in range(current_age, retirement_age):
-        if maximize_contributions:
-            annual_contribution = MAX_CONTRIBUTION
-            if age >= CATCH_UP_AGE:
+    for age in range(current_age+1, retirement_age+1):
+        age_data=dict()
+        age_data["age"]=age
+        age_data["current_salary"]=round(current_salary*(1+annual_salary_growth_rate)**(age-current_age),2)
+        annual_contribution=MAX_CONTRIBUTION
+        if max_out and age >= CATCH_UP_AGE:
                 annual_contribution += CATCH_UP_CONTRIBUTION
-
+        age_data["employee_contribution"]=round(min(annual_contribution,age_data["current_salary"]*annual_contribution_percentage),2)
         # Update total contributions
-        total_contributions += annual_contribution
-
+        total_contributions += age_data["employee_contribution"]
+        age_data["total_contribution"]=total_contributions
         # IRA balance calculation
-        ira_balance = ira_balance * (1 + rate_of_return / 100) + annual_contribution
-
-        # Taxable account balance calculation
-        taxable_account = (taxable_account + annual_contribution) * (1 + rate_of_return / 100) * (1 - tax_rate / 100)
-
+        age_data["total_gains"]=ira_balance *expected_annual_return*(1 - ((0.1+annual_tax_rate) if retirement_age<59 else 0))
+        ira_balance = ira_balance + annual_contribution+age_data["total_gains"]
+        age_data["ira_balance"]=ira_balance
         # Append data for the current year
-        balances.append({
-            'age': age + 1,  # Increment age to represent the year-end age
-            'ira_contribution': annual_contribution,
-            'ira_balance': round(ira_balance, 2),
-            'taxable_account': round(taxable_account * 2, 2)  # Multiply by 2
-        })
+        balances.append(age_data)
+    return balances
+
+
