@@ -156,3 +156,28 @@ function populateReportTable(data) {
         });
     });
 }
+
+document.addEventListener("DOMContentLoaded", async () => {
+    // Make a GET request to fetch initial input values
+    try {
+        const response = await fetch('http://127.0.0.1:5000/api/ira_roth_calculator/'); // Replace with your actual endpoint
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const initialValues = await response.json();
+        
+        // Update the input fields with the values received
+        Object.keys(initialValues).forEach(key => {
+            const input = document.getElementById(key);
+            if (input) {
+                input.value = initialValues[key];
+            }
+        });
+
+        // Optionally, you can call the calculate button click handler to perform computations with the initial values
+        // You may want to delay this if your calculations rely on the DOM being fully loaded
+        document.getElementById("calculate_button").click(); // Call the calculate function directly
+    } catch (error) {
+        console.error("Error fetching initial values:", error);
+    }
+});
