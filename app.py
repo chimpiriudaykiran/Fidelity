@@ -220,4 +220,18 @@ def get_irs_trad_calculator():
     
     return jsonify(result)
 
+@app.route('/api/ira_trad_calculator/', methods=['POST'])
+def get_irs_trad_calculator():
+    sandbox_data=request.json
+    result=trad_ira_calculator(sandbox_data["current_age"],
+                              sandbox_data["retirement_age"],
+                              sandbox_data["current_balance"],
+                              sandbox_data["current_salary"],
+                              sandbox_data["annual_contribution_percentage"],
+                              sandbox_data["expected_annual_return"],
+                              sandbox_data["annual_salary_growth_rate"],
+                              sandbox_data["annual_tax_rate"],
+                              sandbox_data["max_out"])
+    return jsonify(result)
+
 
