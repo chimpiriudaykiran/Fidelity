@@ -236,6 +236,91 @@ def get_irs_trad_calculator():
                               sandbox_data["max_out"])
     return jsonify(result)
 
+@app.route('/api/403b_calculator/', methods=['GET'])
+def get_403b_calculator():
+    user_id = session.get("user")['userinfo']['sub'].split('|')[1]
+    user_data = db.users_info.find_one({"user_id": ObjectId(user_id)})
+    if not user_data:
+        return redirect(url_for("/ira_trad_calculator"))
+    personal_data=user_data["personal_info"]
+    b403_data=user_data["b403"]
+    sandbox_data={"current_age":personal_data["current_age"],
+                  "retirement_age":personal_data["retirement_age"],
+                  "current_salary":personal_data["current_salary"],
+                  "annual_salary_growth_rate":personal_data["annual_salary_growth_rate"],
+                  "current_balance":b403_data["current_balance"],
+                  "annual_contribution_percentage":b403_data["annual_contribution_percentage"],
+                  "expected_annual_return":b403_data["expected_annual_return"],
+                  "annual_investment_fee_rate":b403_data["annual_investment_fee_rate"],
+                  "employer_match_percentage":b403_data["employer_match_percentage"],
+                  "max_out":b403_data["max_out"]}
+    result=retirement_403b_calculator(sandbox_data["current_age"],
+                              sandbox_data["retirement_age"],
+                              sandbox_data["current_balance"],
+                              sandbox_data["current_salary"],
+                              sandbox_data["annual_contribution_percentage"],
+                              sandbox_data["employer_match_percentage"],
+                              sandbox_data["expected_annual_return"],
+                              sandbox_data["annual_salary_growth_rate"],
+                              sandbox_data["annual_investment_fee_rate"],
+                              sandbox_data["max_out"])
     return jsonify(result)
+
+@app.route('/api/ira_trad_calculator/', methods=['GET'])
+def get_data_irs_trad_calculator():
+    user_id = session.get("user")['userinfo']['sub'].split('|')[1]
+    user_data = db.users_info.find_one({"user_id": ObjectId(user_id)})
+    if not user_data:
+        return redirect(url_for("/ira_trad_calculator"))
+    personal_data=user_data["personal_info"]
+    ira_data=user_data["ira_trad"]
+    sandbox_data={"current_age":personal_data["current_age"],
+                  "retirement_age":personal_data["retirement_age"],
+                  "current_salary":personal_data["current_salary"],
+                  "annual_salary_growth_rate":personal_data["annual_salary_growth_rate"],
+                  "current_balance":ira_data["current_balance"],
+                  "annual_contribution_percentage":ira_data["annual_contribution_percentage"],
+                  "expected_annual_return":ira_data["expected_annual_return"],
+                  "annual_tax_rate":ira_data["annual_tax_rate"],
+                  "max_out":ira_data["max_out"]}
+    result=trad_ira_calculator(sandbox_data["current_age"],
+                              sandbox_data["retirement_age"],
+                              sandbox_data["current_balance"],
+                              sandbox_data["current_salary"],
+                              sandbox_data["annual_contribution_percentage"],
+                              sandbox_data["expected_annual_return"],
+                              sandbox_data["annual_salary_growth_rate"],
+                              sandbox_data["annual_tax_rate"],
+                              sandbox_data["max_out"])
+    return jsonify(result)
+
+@app.route('/api/ira_roth_calculator/', methods=['GET'])
+def get_data_irs_roth_calculator():
+    user_id = session.get("user")['userinfo']['sub'].split('|')[1]
+    user_data = db.users_info.find_one({"user_id": ObjectId(user_id)})
+    if not user_data:
+        return redirect(url_for("/ira_roth_calculator"))
+    personal_data=user_data["personal_info"]
+    ira_data=user_data["ira_roth"]
+    sandbox_data={"current_age":personal_data["current_age"],
+                  "retirement_age":personal_data["retirement_age"],
+                  "current_salary":personal_data["current_salary"],
+                  "annual_salary_growth_rate":personal_data["annual_salary_growth_rate"],
+                  "current_balance":ira_data["current_balance"],
+                  "annual_contribution_percentage":ira_data["annual_contribution_percentage"],
+                  "expected_annual_return":ira_data["expected_annual_return"],
+                  "annual_tax_rate":ira_data["annual_tax_rate"],
+                  "max_out":ira_data["max_out"]}
+    result=roth_ira_calculator(sandbox_data["current_age"],
+                              sandbox_data["retirement_age"],
+                              sandbox_data["current_balance"],
+                              sandbox_data["current_salary"],
+                              sandbox_data["annual_contribution_percentage"],
+                              sandbox_data["expected_annual_return"],
+                              sandbox_data["annual_salary_growth_rate"],
+                              sandbox_data["annual_tax_rate"],
+                              sandbox_data["max_out"])
+    return jsonify(result)
+
 
 
