@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Halloween Login Page</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body Styling */
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-image: url('halloween-2837936_1920.png'); /* Set background image */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            font-family: Arial, sans-serif;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        /* Halloween Pumpkin */
+        .pumpkin {
+            position: absolute;
+            left: 20px;
+            bottom: 20px;
+            width: 150px;
+            height: 150px;
+            animation: bounce 2s infinite alternate;
+            cursor: pointer;
+        }
+
+        /* Bounce Animation for Pumpkin */
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
+        }
+
+        /* Bat Image */
+        .bat {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            width: 80px;
+            height: auto;
+            animation: float 5s infinite linear;
+            cursor: pointer;
+        }
+
+        /* Floating Animation for Bat */
+        @keyframes float {
+            0% { left: -80px; top: 20px; transform: scaleX(1); }
+            50% { left: 100vw; top: 50px; transform: scaleX(-1); } /* Reverse direction */
+            100% { left: -80px; top: 20px; transform: scaleX(1); }
+        }
+
+        /* Spider Design */
+        .spider {
+            position: absolute;
+            display: inline-block;
+            top: 10px;
+            right: 20px;
+            animation: swing 1s infinite;
+            transform-origin: top;
+            transition: 1s ease-in-out;
+            cursor: pointer;
+        }
+
+        .spider .spiderweb {
+            width: 2px;
+            height: 200px;
+            margin-left: 49px;
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        .spider .body {
+            width: 100px;
+            height: 80px;
+            background: #000;
+            position: relative;
+            border-radius: 50%;
+        }
+
+        .spider .body .eye {
+            width: 33px;
+            height: 33px;
+            position: absolute;
+            bottom: 20px;
+            background: #fff;
+            border-radius: 50%;
+        }
+
+        .spider .body .eye.left {
+            left: 15px;
+        }
+
+        .spider .body .eye.right {
+            right: 15px;
+        }
+
+        .spider .body .eye:after {
+            background: #000;
+            width: 7px;
+            height: 7px;
+            content: '';
+            display: block;
+            margin: 55%;
+            border-radius: 50%;
+            animation: look 4s infinite;
+        }
+
+        .spider .legs .leg {
+            width: 80px;
+            height: 40px;
+            margin-top: -20px;
+            border: 5px solid transparent;
+            border-top-color: #000;
+            border-radius: 40px 40px 0 0;
+        }
+
+        .spider .legs {
+            position: absolute;
+            bottom: -10%;
+            z-index: -1;
+        }
+
+        .spider .legs.left {
+            left: -70%;
+        }
+        .spider .legs.right {
+            right: -60%;
+        }
+
+        .legs.left .leg:nth-child(1){
+            transform: rotate(10deg);
+            margin-left: 10px;
+        }
+        .legs.right .leg:nth-child(1){
+            transform: rotate(-10deg);
+            margin-left: -10px;
+        }
+
+        .legs.left .leg:nth-child(2){
+            transform: rotate(-20deg);
+            margin-left: 20px;
+        }
+        .legs.right .leg:nth-child(2){
+            transform: rotate(20deg);
+            margin-left: -20px;
+        }
+
+        .legs.left .leg:nth-child(3){
+            transform: rotate(-50deg);
+            margin-left: 30px;
+        }
+        .legs.right .leg:nth-child(3){
+            transform: rotate(50deg);
+            margin-left: -30px;
+        }
+
+        /* Eye Movement Animation */
+        @keyframes look {
+            0%, 40%, 100% {
+                transform: translateX(0); 
+            }
+            45%, 95% {
+                transform: translateX(-110%);
+            }
+        }
+
+        /* Swing Animation for Spider */
+        @keyframes swing {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        /* Centered Login Form */
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 300px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: rgba(0, 0, 0, 0.7);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Form Elements */
+        h1 {
+            margin-bottom: 20px;
+            color: #ff6f00;
+            font-family: 'Creepster', cursive;
+        }
+
+        label {
+            font-size: 1rem;
+            color: #ffb366;
+            display: block;
+            margin-top: 10px;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            border: none;
+            background-color: #ff6f00;
+            color: white;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background-color: #ff851b;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Halloween Pumpkin with Bounce -->
+    <img src="pumpkin.png" class="pumpkin" alt="Pumpkin" onclick="toggleBounce()">
+
+    <!-- Bat Image with Floating Animation -->
+    <img src="image.svg" class="bat" alt="Bat" onclick="toggleFloat()">
+
+    <!-- Spider with Swinging and Eye Movement -->
+    <div class="spider" onclick="changeDirection()">
+        <div class="spiderweb"></div>
+        <div class="body">
+            <div class="eye left"></div>
+            <div class="eye right"></div>
+        </div>
+        <div class="legs left">
+            <div class="leg"></div>
+            <div class="leg"></div>
+            <div class="leg"></div>
+        </div>
+        <div class="legs right">
+            <div class="leg"></div>
+            <div class="leg"></div>
+            <div class="leg"></div>
+        </div>
+    </div>
+
+    <!-- Login Form -->
+    <div class="login-container">
+        <h1>Login</h1>
+        <form action="#" method="POST">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit" class="submit-btn">Login</button>
+        </form>
+    </div>
+
+    <!-- JavaScript for Interactivity -->
+    <script>
+        // Toggle Bounce for Pumpkin
+        function toggleBounce() {
+            const pumpkin = document.querySelector('.pumpkin');
+            pumpkin.classList.toggle('bouncing');
+            if (pumpkin.classList.contains('bouncing')) {
+                pumpkin.style.animation = 'bounce 2s infinite alternate';
+            } else {
+                pumpkin.style.animation = 'none';
+            }
+        }
+
+        // Change Direction of Spider Swing
+        function changeDirection() {
+            const spider = document.querySelector('.spider');
+            if (spider.style.animationDirection === 'reverse') {
+                spider.style.animationDirection = 'normal';
+            } else {
+                spider.style.animationDirection = 'reverse';
+            }
+        }
+    </script>
+
+</body>
+</html>
