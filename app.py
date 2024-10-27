@@ -192,6 +192,22 @@ def post_403b_calculator():
                               sandbox_data["max_out"])
     return jsonify(result)
 
+@app.route('/api/403b_calculator/', methods=['POST'])
+def post_403b_calculator():
+    # TODO: Look for data if exists, update, else create
+    sandbox_data=request.json
+    result=retirement_403b_calculator(sandbox_data["current_age"],
+                              sandbox_data["retirement_age"],
+                              sandbox_data["current_balance"],
+                              sandbox_data["current_salary"],
+                              sandbox_data["annual_contribution_percentage"],
+                              sandbox_data["employer_match_percentage"],
+                              sandbox_data["expected_annual_return"],
+                              sandbox_data["annual_salary_growth_rate"],
+                              sandbox_data["annual_investment_fee_rate"],
+                              sandbox_data["max_out"])
+    return jsonify(result)
+
 @app.route('/api/ira_roth_calculator/', methods=['POST'])
 def get_irs_roth_calculator():
     sandbox_data=request.json
@@ -204,20 +220,6 @@ def get_irs_roth_calculator():
                               sandbox_data["annual_salary_growth_rate"],
                               sandbox_data["annual_tax_rate"],
                               sandbox_data["max_out"])
-    return jsonify(result)   
-
-@app.route('/api/ira_trad_calculator/', methods=['POST'])
-def get_irs_trad_calculator():
-    sandbox_data=request.json
-    result=trad_ira_calculator(sandbox_data["current_age"],
-                              sandbox_data["retirement_age"],
-                              sandbox_data["current_balance"],
-                              sandbox_data["annual_contribution_percentage"],
-                              sandbox_data["expected_annual_return"],
-                              sandbox_data["annual_salary_growth_rate"],
-                              sandbox_data["annual_tax_rate"],
-                              sandbox_data["max_out"])
-    
     return jsonify(result)
 
 @app.route('/api/ira_trad_calculator/', methods=['POST'])
@@ -232,6 +234,8 @@ def get_irs_trad_calculator():
                               sandbox_data["annual_salary_growth_rate"],
                               sandbox_data["annual_tax_rate"],
                               sandbox_data["max_out"])
+    return jsonify(result)
+
     return jsonify(result)
 
 
