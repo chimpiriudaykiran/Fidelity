@@ -157,3 +157,31 @@ def post_403b_calculator():
                               sandbox_data["annual_investment_fee_rate"],
                               sandbox_data["max_out"])
     return jsonify(result)
+
+
+@app.route('/post_roth_ira_calculate', methods=['POST'])
+def post_roth_ira_calculate():
+    starting_balance = float(request.form['starting_balance'])
+    annual_contribution = float(request.form['annual_contribution'])
+    current_age = int(request.form['current_age'])
+    retirement_age = int(request.form['retirement_age'])
+    rate_of_return = float(request.form['rate_of_return'])
+    tax_rate = float(request.form['tax_rate'])
+    maximize_contributions = 'maximize_contributions' in request.form
+
+    balances, total_contributions, ira_total_at_retirement, taxable_amount = roth_ira_calculator(
+        starting_balance,
+        annual_contribution,
+        current_age,
+        retirement_age,
+        rate_of_return,
+        tax_rate,
+        maximize_contributions
+    )
+
+    return jsonify({
+        'balances': balances,
+        'total_contributions': total_contributions,
+        'ira_total_at_retirement': ira_total_at_retirement,
+        'taxable_amount': taxable_amount
+    })    
