@@ -90,3 +90,42 @@ def roth_ira_calculator(
     return balances
 
 
+def trad_ira_calculator(
+    starting_balance, 
+    annual_contrib, 
+    current_age, 
+    retire_age, 
+    maximize_contrib,
+    rate_of_return, 
+    current_tax_rate
+):
+
+    data = []
+    balance = starting_balance
+    taxable_balance = 0
+    max_annual_contrib = 7000 if current_age < 50 else 8000
+
+    for age in range(current_age+1, retire_age+1):
+        # Determine contribution for the year
+        contribution = max_annual_contrib if maximize_contrib else annual_contrib
+        if age >= 50:
+            contribution += 1000  # Catch-up contribution for age 50+
+
+        # Calculate IRA balance after contribution and interest
+        balance = (balance + contribution) * (1 + rate_of_return / 100)
+
+        # Taxable account deposit calculation
+        tax_savings = contribution * (current_tax_rate / 100)
+        taxable_deposit = contribution - tax_savings
+        taxable_balance = (taxable_balance + taxable_deposit) * (1 + rate_of_return / 100)
+
+        # Append row data to yearly table
+        data.append({
+            "age": age,
+            "ira_contribution": f"{contribution:.2f}",
+            "ira_balance": f"{balance:.2f}",
+            "taxable_deposit": f"{taxable_deposit:.2f}",
+            "taxable_balance": f"{taxable_balance:.2f}"
+        })
+
+    return data   
