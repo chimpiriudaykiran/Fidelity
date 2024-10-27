@@ -93,6 +93,17 @@ def home():
 
 db = PyMongo(app).db
 
+@app.route('/403b_calculator')
+def index():
+    return render_template('403b.html')
+
+@app.route('/ira_roth_calculator')
+def index2():
+    return render_template('ira_roth.html')
+
+@app.route('/ira_trad_calculator')
+def index4():
+    return render_template('ira_trad.html')
 
 @app.route('/get_user/<string:id>', methods=['GET'])
 def select(id):
@@ -174,6 +185,24 @@ def get_trs_calculator():
                               sandbox_data["penalty_rate_per_year"]))
 
 
+# @app.route('/api/403b_calculator/', methods=['POST'])
+# def post_403b_calculator():
+#     # TODO: Look for data if exists, update, else create
+#     sandbox_data=request.json
+#     result=retirement_403b_calculator(sandbox_data["current_age"],
+#                               sandbox_data["retirement_age"],
+#                               sandbox_data["current_balance"],
+#                               sandbox_data["current_salary"],
+#                               sandbox_data["annual_growth_rate"],
+#                               sandbox_data["penalty_rate_per_year"],
+#                               sandbox_data["annual_contribution_percentage"],
+#                               sandbox_data["employer_match_percentage"],
+#                               sandbox_data["expected_annual_return"],
+#                               sandbox_data["annual_salary_growth_rate"],
+#                               sandbox_data["annual_investment_fee_rate"],
+#                               sandbox_data["max_out"])
+#     return jsonify(result)
+
 @app.route('/api/403b_calculator/', methods=['POST'])
 def post_403b_calculator():
     # TODO: Look for data if exists, update, else create
@@ -182,8 +211,6 @@ def post_403b_calculator():
                               sandbox_data["retirement_age"],
                               sandbox_data["current_balance"],
                               sandbox_data["current_salary"],
-                              sandbox_data["annual_growth_rate"],
-                              sandbox_data["penalty_rate_per_year"],
                               sandbox_data["annual_contribution_percentage"],
                               sandbox_data["employer_match_percentage"],
                               sandbox_data["expected_annual_return"],
@@ -305,6 +332,5 @@ def get_data_irs_roth_calculator():
                               sandbox_data["annual_tax_rate"],
                               sandbox_data["max_out"])
     return jsonify(result)
-
 
 

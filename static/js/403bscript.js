@@ -16,7 +16,7 @@ document.getElementById("calculate_button").addEventListener("click", async (eve
     };
 
     try {
-        const response = await fetch('http://127.0.0.1:5000/api/403b_calculator/', {
+        const response = await fetch('/api/403b_calculator/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

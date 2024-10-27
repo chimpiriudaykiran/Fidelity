@@ -9,78 +9,19 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+    <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Butcherman&display=swap" rel="stylesheet">
 </head>
-<style>
-    /* For Chrome, Edge, and Safari */
-    ::-webkit-scrollbar {
-        width: 6px; /* Slim width */
-    }
 
-    ::-webkit-scrollbar-track {
-        background: transparent; /* Hide track */
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: #888; /* Scroll thumb color */
-        border-radius: 10px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: #555; /* Thumb color on hover */
-    }
-
-    /* For Firefox */
-    * {
-        scrollbar-width: thin; /* Slim scrollbar */
-        scrollbar-color: #888 transparent; /* Only show thumb color */
-    }
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    /* Set the gradient background for the whole page */
-    body {
-        /* Background gradient with a very dark blue (#0a0b2b) near black at the top */
-        background: linear-gradient(to bottom, #0a0b2b, #1a1d4e); /* Gradient background */
-        background-size: cover;
-        background-position: center;
-        color: white;
-        font-family: Arial, sans-serif;
-        min-height: 100vh; /* Ensure full viewport height */
-    }
-
-    /* Style the navbar */
-    .navbar {
-        background-color: rgba(0, 0, 0, 0.3); /* Semi-transparent black background for navbar */
-        padding: 1em;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    /* Style the nav links */
-    .navbar button {
-        color: orange; /* Text color for links */
-        text-decoration: none;
-        margin: 0 15px;
-        padding: 10px 15px;
-        font-weight: bold;
-        transition: background-color 0.3s, color 0.3s; /* Smooth transition */
-    }
-
-    /* Hover effect for nav links */
-    .navbar button:hover {
-        background-color: orange; /* Change background on hover */
-        color: black; /* Change text color on hover */
-        border-radius: 5px;
-    }
-</style>
 <body data-bs-theme="dark">
 <nav class="navbar navbar-expand-lg navbar-dark">
+    <a class="navbar-brand" href="#">Retirement Ranch</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
     <div class="container-fluid">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,20 +29,27 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
+
                 <li class="nav-item">
                     <button type="button" class="nav-link" data-bs-toggle="modal" data-bs-target="#step1Modal">Employee
                         Details
                     </button>
                 </li>
                 <li class="nav-item">
-                    <button type="button" class="nav-link" href="/403b_calculator">403(b) Calculator</button>
+                    <button type="button" class="nav-link" onclick="window.location.href='/403b_calculator'">403(b)
+                        Calculator
+                    </button>
                 </li>
                 <li class="nav-item">
-                    <button type="button" class="nav-link" href="/ira_roth_calculator">IRA(Roth) Calculator</button>
+                    <button type="button" class="nav-link" onclick="window.location.href='/ira_roth_calculator'">
+                        IRA(Roth) Calculator
+                    </button>
                 </li>
-                
+
                 <li class="nav-item">
-                    <button type="button" class="nav-link" href="/ira_trad_calculator">IRA(Traditional) Calculator</button>
+                    <button type="button" class="nav-link" onclick="window.location.href='/ira_trad_calculator'">
+                        IRA(Traditional) Calculator
+                    </button>
                 </li>
                 <li class="nav-item">
                     <button type="button" class="nav-link" onclick="window.location.href='/logout'">Logout</button>
@@ -180,17 +128,27 @@
             </div>
             <div class="modal-body">
                 <div class="form-group mb-3">
-                    <label for="name">Name</label>
-                    <input type="text" class="form-control bg-secondary text-white" id="name" required>
+                    <label for="current_age">Current Age</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="current_age" required>
                 </div>
+
                 <div class="form-group mb-3">
-                    <label for="dob">Date of Birth</label>
-                    <input type="date" class="form-control bg-secondary text-white" id="dob" required>
+                    <label for="retirement_age">Retirement Age</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="retirement_age" required>
                 </div>
+
                 <div class="form-group mb-3">
-                    <label for="income">Annual Income</label>
-                    <input type="number" class="form-control bg-secondary text-white" id="income" required>
+                    <label for="current_salary">Current Salary</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="current_salary" step="0.01"
+                           required>
                 </div>
+
+                <div class="form-group mb-3">
+                    <label for="annual_salary_growth_rate">Annual Salary Growth Rate (%)</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="annual_salary_growth_rate"
+                           step="0.01" required>
+                </div>
+
             </div>
             <div class="modal-footer">
                 <button class="btn btn-primary" data-bs-target="#step2Modal" data-bs-toggle="modal">Next</button>
@@ -203,38 +161,18 @@
 <div class="modal fade" id="step2Modal" tabindex="-1" aria-labelledby="step2ModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
+
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="step2ModalLabel">TRS Information</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="form-group mb-3">
-                    <label for="currentYearsService">Current Years of Service</label>
-                    <input type="number" class="form-control bg-secondary text-white" id="currentYearsService">
+                    <label for="trs_current_years_service">Current Years of Service</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="trs_current_years_service"
+                           step="0.01" required>
                 </div>
-                <div class="form-group mb-3">
-                    <label for="expectedRetirementAge">Expected Retirement Age</label>
-                    <input type="number" class="form-control bg-secondary text-white" id="expectedRetirementAge">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="currentSalary">Current Salary</label>
-                    <input type="number" class="form-control bg-secondary text-white" id="currentSalary">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="annualGrowthRate">Annual Growth Rate</label>
-                    <input type="number" class="form-control bg-secondary text-white" id="annualGrowthRate"
-                           step="0.01">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="penaltyRatePerYear">Penalty Rate per Year (if applicable)</label>
-                    <input type="number" class="form-control bg-secondary text-white" id="penaltyRatePerYear"
-                           value="0.06" step="0.01">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="trsMultiplier">TRS Multiplier</label>
-                    <input type="number" class="form-control bg-secondary text-white" id="trsMultiplier"
-                           value="0.023" step="0.001">
-                </div>
+
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" data-bs-target="#step1Modal" data-bs-toggle="modal">Previous</button>
@@ -244,65 +182,104 @@
     </div>
 </div>
 
-<!-- 403b Modal -->
+<!-- 403B Modal -->
 <div class="modal fade" id="step3Modal" tabindex="-1" aria-labelledby="step3ModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
+
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="step3ModalLabel">403b Information</h1>
+                <h1 class="modal-title fs-5" id="step3ModalLabel">403B Information</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="form-group mb-3">
-                    <label for="currentAge403b">Current Age</label>
-                    <input type="number" class="form-control bg-secondary text-white" id="currentAge403b">
+                    <label for="403_current_balance">Current Balance</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="403_current_balance"
+                           step="0.01"
+                           required>
                 </div>
                 <div class="form-group mb-3">
-                    <label for="retirementAge403b">Retirement Age</label>
-                    <input type="number" class="form-control bg-secondary text-white" id="retirementAge403b">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="currentBalance403b">Current Balance</label>
-                    <input type="number" class="form-control bg-secondary text-white" id="currentBalance403b"
-                           step="0.01">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="currentSalary403b">Current Salary</label>
-                    <input type="number" class="form-control bg-secondary text-white" id="currentSalary403b">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="annualContributionPercentage">Annual Contribution Percentage</label>
+                    <label for="403_annual_contribution_percentage">Annual Contribution Percentage (%)</label>
                     <input type="number" class="form-control bg-secondary text-white"
-                           id="annualContributionPercentage" step="0.01">
+                           id="403_annual_contribution_percentage" step="0.01" required>
                 </div>
+
                 <div class="form-group mb-3">
-                    <label for="employerMatchPercentage">Employer Match Percentage</label>
-                    <input type="number" class="form-control bg-secondary text-white" id="employerMatchPercentage"
-                           step="0.01">
+                    <label for="403_employer_match_percentage">Employer Match Percentage (%)</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="403_employer_match_percentage"
+                           step="0.01" required>
                 </div>
+
                 <div class="form-group mb-3">
-                    <label for="expectedAnnualReturn">Expected Annual Return</label>
-                    <input type="number" class="form-control bg-secondary text-white" id="expectedAnnualReturn"
-                           value="0.06" step="0.01">
+                    <label for="403_expected_annual_return">Expected Annual Return (%)</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="403_expected_annual_return"
+                           step="0.01" required>
                 </div>
+
                 <div class="form-group mb-3">
-                    <label for="annualSalaryGrowthRate">Annual Salary Growth Rate</label>
-                    <input type="number" class="form-control bg-secondary text-white" id="annualSalaryGrowthRate"
-                           value="0.0026" step="0.0001">
+                    <label for="403_annual_investment_fee_rate">Annual Investment Fee Rate (%)</label>
+                    <input type="number" class="form-control bg-secondary text-white"
+                           id="403_annual_investment_fee_rate"
+                           step="0.01" required>
                 </div>
-                <div class="form-group mb-3">
-                    <label for="annualInvestmentFeeRate">Annual Investment Fee Rate</label>
-                    <input type="number" class="form-control bg-secondary text-white" id="annualInvestmentFeeRate"
-                           value="0.0015" step="0.0001">
+
+                <div class="form-check mb-3">
+                    <input type="checkbox" class="form-check-input" id="403_max_out">
+                    <label class="form-check-label" for="403_max_out">Maximum Contribution Out</label>
                 </div>
-                <div class="form-group mb-3">
-                    <label for="maxOut">Max Out</label>
-                    <input type="checkbox" class="form-check-input" id="maxOut">
-                </div>
+
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" data-bs-target="#step2Modal" data-bs-toggle="modal">Previous</button>
                 <button class="btn btn-primary" data-bs-target="#step4Modal" data-bs-toggle="modal">Next</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- IRA-ROTH Modal -->
+<div class="modal fade" id="step4Modal" tabindex="-1" aria-labelledby="step4ModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="step4ModalLabel">IRA-ROTH Information</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group mb-3">
+                    <label for="roth_current_balance">Current Balance</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="roth_current_balance"
+                           step="0.01"
+                           required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="roth_annual_contribution_percentage">Annual Contribution Percentage (%)</label>
+                    <input type="number" class="form-control bg-secondary text-white"
+                           id="roth_annual_contribution_percentage" step="0.01" required>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="roth_expected_annual_return">Expected Annual Return (%)</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="roth_expected_annual_return"
+                           step="0.01" required>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="roth_annual_tax_rate">Annual Tax Rate (%)</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="roth_annual_tax_rate"
+                           step="0.01"
+                           required>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input type="checkbox" class="form-check-input" id="roth_max_out">
+                    <label class="form-check-label" for="roth_max_out">Maximum Contribution Out</label>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-target="#step3Modal" data-bs-toggle="modal">Previous</button>
+                <button class="btn btn-primary" data-bs-target="#step5Modal" data-bs-toggle="modal">Next</button>
 
             </div>
         </div>
@@ -310,64 +287,48 @@
 </div>
 
 
-<!-- IRA Modal -->
-<div class="modal fade" id="step4Modal" tabindex="-1" aria-labelledby="step4ModalLabel" aria-hidden="true">
+<!-- IRA-TRAD Modal -->
+<div class="modal fade" id="step5Modal" tabindex="-1" aria-labelledby="step5ModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="step4ModalLabel">IRA Information</h1>
+                <h1 class="modal-title fs-5" id="step5ModalLabel">IRA Information</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="form-group mb-3">
-                    <label for="currentAgeIra">Current Age</label>
-                    <input type="number" class="form-control bg-secondary text-white" id="currentAgeIra">
+                    <label for="trad_current_balance">Current Balance</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="trad_current_balance"
+                           step="0.01"
+                           required>
                 </div>
                 <div class="form-group mb-3">
-                    <label for="retirementAgeIra">Retirement Age</label>
-                    <input type="number" class="form-control bg-secondary text-white" id="retirementAgeIra">
+                    <label for="trad_annual_contribution_percentage">Annual Contribution Percentage (%)</label>
+                    <input type="number" class="form-control bg-secondary text-white"
+                           id="trad_annual_contribution_percentage" step="0.01" required>
                 </div>
+
                 <div class="form-group mb-3">
-                    <label for="currentBalanceIra">Current Balance</label>
-                    <input type="number" class="form-control bg-secondary text-white" id="currentBalanceIra"
-                           step="0.01">
+                    <label for="trad_expected_annual_return">Expected Annual Return (%)</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="trad_expected_annual_return"
+                           step="0.01" required>
                 </div>
+
                 <div class="form-group mb-3">
-                    <label for="currentSalaryIra">Current Salary</label>
-                    <input type="number" class="form-control bg-secondary text-white" id="currentSalaryIra">
+                    <label for="trad_annual_tax_rate">Annual Tax Rate (%)</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="trad_annual_tax_rate"
+                           step="0.01"
+                           required>
                 </div>
-                <div class="form-group mb-3">
-                    <label for="annualContributionPercentage">Annual Contribution Percentage</label>
-                    <input type="number" class="form-control bg-secondary text-white" id="annualContributionPercentage"
-                           step="0.01">
+
+                <div class="form-check mb-3">
+                    <input type="checkbox" class="form-check-input" id="trad_max_out">
+                    <label class="form-check-label" for="trad_max_out">Maximum Contribution Out</label>
                 </div>
-                <div class="form-group mb-3">
-                    <label for="employerMatchPercentage">Employer Match Percentage</label>
-                    <input type="number" class="form-control bg-secondary text-white" id="employerMatchPercentage"
-                           step="0.01">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="expectedAnnualReturn">Expected Annual Return</label>
-                    <input type="number" class="form-control bg-secondary text-white" id="expectedAnnualReturn"
-                           value="0.06" step="0.01">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="annualSalaryGrowthRate">Annual Salary Growth Rate</label>
-                    <input type="number" class="form-control bg-secondary text-white" id="annualSalaryGrowthRate"
-                           value="0.0026" step="0.0001">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="annualInvestmentFeeRate">Annual Investment Fee Rate</label>
-                    <input type="number" class="form-control bg-secondary text-white" id="annualInvestmentFeeRate"
-                           value="0.0015" step="0.0001">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="maxOut">Max Out</label>
-                    <input type="checkbox" class="form-check-input" id="maxOut">
-                </div>
+
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-target="#step2Modal" data-bs-toggle="modal">Previous</button>
+                <button class="btn btn-secondary" data-bs-target="#step4Modal" data-bs-toggle="modal">Previous</button>
                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
             </div>
         </div>
@@ -377,56 +338,52 @@
 <script>
     async function gatherAndSendData() {
         // Collect personal info
-        const personalInfo = {
-            name: document.getElementById('name').value,
-            dob: document.getElementById('dob').value,
-            income: parseFloat(document.getElementById('income').value),
-        };
-
-        // Collect TRS data
-        const trs = {
-            currentYearsService: parseFloat(document.getElementById('currentYearsService').value),
-            expectedRetirementAge: parseFloat(document.getElementById('expectedRetirementAge').value),
-            currentSalary: parseFloat(document.getElementById('currentSalary').value),
-            annualGrowthRate: parseFloat(document.getElementById('annualGrowthRate').value),
-            penaltyRatePerYear: parseFloat(document.getElementById('penaltyRatePerYear').value),
-            trsMultiplier: parseFloat(document.getElementById('trsMultiplier').value),
+        const personal_info = {
+            current_age: parseFloat(document.getElementById('current_age').value),
+            retirement_age: parseFloat(document.getElementById('retirement_age').value),
+            current_salary: parseFloat(document.getElementById('current_salary').value),
+            annual_salary_growth_rate: parseFloat(document.getElementById('annual_salary_growth_rate').value / 100),
         };
 
         // Collect 403b data
         const b403 = {
-            currentAge: parseFloat(document.getElementById('currentAge403b').value),
-            retirementAge: parseFloat(document.getElementById('retirementAge403b').value),
-            currentBalance: parseFloat(document.getElementById('currentBalance403b').value),
-            currentSalary: parseFloat(document.getElementById('currentSalary403b').value),
-            annualContributionPercentage: parseFloat(document.getElementById('annualContributionPercentage').value),
-            employerMatchPercentage: parseFloat(document.getElementById('employerMatchPercentage').value),
-            expectedAnnualReturn: parseFloat(document.getElementById('expectedAnnualReturn').value),
-            annualSalaryGrowthRate: parseFloat(document.getElementById('annualSalaryGrowthRate').value),
-            annualInvestmentFeeRate: parseFloat(document.getElementById('annualInvestmentFeeRate').value),
-            maxOut: document.getElementById('maxOut').checked,
+            annual_contribution_percentage: parseFloat(document.getElementById('403_annual_contribution_percentage').value / 100),
+            employer_match_percentage: parseFloat(document.getElementById('403_employer_match_percentage').value / 100),
+            expected_annual_return: parseFloat(document.getElementById('403_expected_annual_return').value / 100),
+            current_balance: parseFloat(document.getElementById('403_current_balance').value),
+            annual_investment_fee_rate: parseFloat(document.getElementById('403_annual_investment_fee_rate').value / 100),
+            max_out: document.getElementById("403_max_out").checked, // Adjust based on how max_out is represented
         };
 
         // Collect IRA data
-        const ira = {
-            currentAge: parseFloat(document.getElementById('currentAgeIra').value),
-            retirementAge: parseFloat(document.getElementById('retirementAgeIra').value),
-            currentBalance: parseFloat(document.getElementById('currentBalanceIra').value),
-            currentSalary: parseFloat(document.getElementById('currentSalaryIra').value),
-            annualContributionPercentage: parseFloat(document.getElementById('annualContributionPercentage').value),
-            employerMatchPercentage: parseFloat(document.getElementById('employerMatchPercentage').value),
-            expectedAnnualReturn: parseFloat(document.getElementById('expectedAnnualReturn').value),
-            annualSalaryGrowthRate: parseFloat(document.getElementById('annualSalaryGrowthRate').value),
-            annualInvestmentFeeRate: parseFloat(document.getElementById('annualInvestmentFeeRate').value),
-            maxOut: document.getElementById('maxOut').checked,
+        const ira_roth = {
+            annual_contribution_percentage: parseFloat(document.getElementById('roth_annual_contribution_percentage').value / 100),
+            expected_annual_return: parseFloat(document.getElementById('roth_expected_annual_return').value / 100),
+            annual_tax_rate: parseFloat(document.getElementById('roth_annual_tax_rate').value / 100),
+            current_balance: parseFloat(document.getElementById('roth_current_balance').value),
+            max_out: document.getElementById("roth_max_out").checked, // Adjust based on how max_out is represented
+        };
+
+        // Collect IRA-Trad data
+        const ira_trad = {
+            annual_contribution_percentage: parseFloat(document.getElementById('trad_annual_contribution_percentage').value / 100),
+            expected_annual_return: parseFloat(document.getElementById('trad_expected_annual_return').value / 100),
+            annual_tax_rate: parseFloat(document.getElementById('trad_annual_tax_rate').value) / 100,
+            current_balance: parseFloat(document.getElementById('trad_current_balance').value),
+            max_out: document.getElementById("trad_max_out").checked, // Adjust based on how max_out is represented
+        };
+
+        const trs = {
+            current_years_service: parseFloat(document.getElementById('trs_current_years_service').value)
         };
 
         // Prepare the JSON object
         const data = {
-            personalInfo,
-            trs,
+            personal_info,
             b403,
-            ira,
+            ira_roth,
+            ira_trad,
+            trs
         };
 
         // Send data to Flask backend
@@ -448,9 +405,10 @@
         }
     }
 
-    // Bind the function to the Finish button
-    document.querySelector('#step4Modal .btn-primary[data-bs-dismiss="modal"]').addEventListener('click', gatherAndSendData);
+    // Bind the function to the Finish button in the last modal
+    document.querySelector('#step5Modal .btn-primary[data-bs-dismiss="modal"]').addEventListener('click', gatherAndSendData);
 </script>
+
 
 <script>
     function showAlert(message, type) {
@@ -573,51 +531,40 @@
                 if (response.message === "success") {
                     const userInfo = response.user_info;
 
-                    // Fill in the Personal Information Modal fields
-                    $('#name').val(userInfo.personalInfo.name);
-                    $('#dob').val(userInfo.personalInfo.dob);
-                    $('#income').val(userInfo.personalInfo.income);
+                    // Fill in the Personal Information fields
+                    $('#current_age').val(userInfo.personal_info.current_age);
+                    $('#retirement_age').val(userInfo.personal_info.retirement_age);
+                    $('#current_salary').val(userInfo.personal_info.current_salary);
+                    $('#annual_salary_growth_rate').val(userInfo.personal_info.annual_salary_growth_rate * 100);
 
-                    // Fill in the TRS Modal fields
-                    $('#currentYearsService').val(userInfo.trs.currentYearsService);
-                    $('#expectedRetirementAge').val(userInfo.trs.expectedRetirementAge);
-                    $('#currentSalary').val(userInfo.trs.currentSalary);
-                    $('#annualGrowthRate').val(userInfo.trs.annualGrowthRate);
-                    $('#penaltyRatePerYear').val(userInfo.trs.penaltyRatePerYear);
-                    $('#trsMultiplier').val(userInfo.trs.trsMultiplier);
+                    $('#current_years_service').val(userInfo.trs.current_years_service);
 
-                    // Fill in the 403b Modal fields
-                    $('#currentAge403b').val(userInfo.b403.currentAge);
-                    $('#retirementAge403b').val(userInfo.b403.retirementAge);
-                    $('#currentBalance403b').val(userInfo.b403.currentBalance);
-                    $('#currentSalary403b').val(userInfo.b403.currentSalary);
-                    $('#annualContributionPercentage').val(userInfo.b403.annualContributionPercentage);
-                    $('#employerMatchPercentage').val(userInfo.b403.employerMatchPercentage);
-                    $('#expectedAnnualReturn').val(userInfo.b403.expectedAnnualReturn);
-                    $('#annualSalaryGrowthRate').val(userInfo.b403.annualSalaryGrowthRate);
-                    $('#annualInvestmentFeeRate').val(userInfo.b403.annualInvestmentFeeRate);
-                    $('#maxOut').prop('checked', userInfo.b403.maxOut);
+                    // Fill in the 403b fields
+                    $('#403_annual_contribution_percentage').val(userInfo.b403.annual_contribution_percentage * 100);
+                    $('#403_employer_match_percentage').val(userInfo.b403.employer_match_percentage * 100);
+                    $('#403_expected_annual_return').val(userInfo.b403.expected_annual_return * 100);
+                    $('#403_current_balance').val(userInfo.b403.current_balance);
+                    $('#403_annual_investment_fee_rate').val(userInfo.b403.annual_investment_fee_rate * 100);
+                    $('#403_max_out').prop('checked', userInfo.b403.max_out);
 
-                    // Fill in the IRA Modal fields
-                    $('#currentAgeIra').val(userInfo.ira.currentAge);
-                    $('#retirementAgeIra').val(userInfo.ira.retirementAge);
-                    $('#currentBalanceIra').val(userInfo.ira.currentBalance);
-                    $('#currentSalaryIra').val(userInfo.ira.currentSalary);
-                    $('#annualContributionPercentageIra').val(userInfo.ira.annualContributionPercentage);
-                    $('#employerMatchPercentageIra').val(userInfo.ira.employerMatchPercentage);
-                    $('#expectedAnnualReturnIra').val(userInfo.ira.expectedAnnualReturn);
-                    $('#annualSalaryGrowthRateIra').val(userInfo.ira.annualSalaryGrowthRate);
-                    $('#annualInvestmentFeeRateIra').val(userInfo.ira.annualInvestmentFeeRate);
-                    $('#maxOutIra').prop('checked', userInfo.ira.maxOut);
+                    // Fill in the IRA Roth fields
+                    $('#roth_annual_contribution_percentage').val(userInfo.ira_roth.annual_contribution_percentage * 100);
+                    $('#roth_expected_annual_return').val(userInfo.ira_roth.expected_annual_return * 100);
+                    $('#roth_annual_tax_rate').val(userInfo.ira_roth.annual_tax_rate * 100);
+                    $('#roth_current_balance').val(userInfo.ira_roth.current_balance);
+                    $('#roth_max_out').prop('checked', userInfo.ira_roth.max_out);
 
-                    // If any essential information is missing, show the relevant modal
-                    if (!userInfo.personalInfo.dob || !userInfo.trs.expectedRetirementAge) {
+                    // Fill in the IRA Trad fields
+                    $('#trad_annual_contribution_percentage').val(userInfo.ira_trad.annual_contribution_percentage * 100);
+                    $('#trad_expected_annual_return').val(userInfo.ira_trad.expected_annual_return * 100);
+                    $('#trad_annual_tax_rate').val(userInfo.ira_trad.annual_tax_rate * 100);
+                    $('#trad_current_balance').val(userInfo.ira_trad.current_balance);
+                    $('#trad_max_out').prop('checked', userInfo.ira_trad.max_out);
+
+                    // Show appropriate modal if any essential information is missing
+                    if (!userInfo.personal_info.current_age || !userInfo.personal_info.retirement_age || !userInfo.personal_info.current_salary || !userInfo.personal_info.annual_salary_growth_rate) {
                         $('#step1Modal').modal('show');
-                    } else {
-                        // Show the last modal if all information is filled
-                        $('#step4Modal').modal('show');
                     }
-
                 } else {
                     console.error("API response was not successful.");
                 }
