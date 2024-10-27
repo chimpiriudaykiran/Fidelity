@@ -1,0 +1,136 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    background-color: #f3f4f6;
+    padding: 20px;
+}
+
+.container {
+    display: flex;
+    max-width: 100%;
+    width: 100%;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+.form-section, .graph-section {
+    width: 48%;
+    box-sizing: border-box;
+}
+
+.form-section {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+}
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+.form-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+label {
+    font-weight: bold;
+    color: #555;
+    width: 45%;
+    text-align: left;
+}
+input[type="number"], select {
+    width: 50%;
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+button:hover {
+    background-color: #45a049;
+}
+
+.chart-container {
+    flex: 1; /* Allow this div to grow and fill the remaining space */
+    position: relative; /* Position relative for absolute children */
+}
+
+.graph-section {
+    width: 50%;
+    background-color: #f9fafb;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column; /* Stack dropdown and chart vertically */
+    height: calc(80vh - 40px); /* Full height minus padding */
+    position: relative; /* Ensure positioning context for children */
+}
+
+#dropdownContainer {
+    margin-bottom: 10px; /* Space between dropdown and chart */
+    z-index: 1; /* Ensure dropdown is on top */
+}
+
+#chart {
+    flex: 1; /* Allow SVG to grow and fill the remaining space */
+    width: 100%; /* Fill width of the graph section */
+    height: calc(80% - 40px); /* Fill height, adjusting for dropdown space */
+}
+
+.report-section {
+    width: 100%;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.report-section h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+#reportTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#reportTable th, #reportTable td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+#reportTable th {
+    background-color: #f3f4f6;
+    color: #555;
+    font-weight: bold;
+}
+
+#reportTable tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
