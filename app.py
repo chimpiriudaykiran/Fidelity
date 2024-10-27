@@ -1,3 +1,5 @@
+import random
+
 from flask import Flask, jsonify, request,redirect,url_for, current_app, g
 from util import trs_retirement_calculator,retirement_403b_calculator
 from flask_pymongo import PyMongo
@@ -37,11 +39,23 @@ oauth.register(
     server_metadata_url=f'https://{env.get("AUTH0_DOMAIN")}/.well-known/openid-configuration'
 )
 
+def serialize_objectid(data):
+    if isinstance(data, dict):
+        return {k: serialize_objectid(v) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [serialize_objectid(i) for i in data]
+    elif isinstance(data, ObjectId):
+        return str(data)
+    return data
+
 @app.route("/login")
 def login():
-    return oauth.auth0.authorize_redirect(
-        redirect_uri=url_for("callback", _external=True)
-    )
+    if 'user' in session:
+        return redirect(url_for('dashboard'))
+    else:
+        return oauth.auth0.authorize_redirect(
+            redirect_uri=url_for("callback", _external=True)
+        )
 
 # 👆 We're continuing from the steps above. Append this to your server.py file.
 
@@ -49,9 +63,8 @@ def login():
 def callback():
     token = oauth.auth0.authorize_access_token()
     session["user"] = token
-    return redirect("/")
+    return redirect("/dashboard")
 
-# 👆 We're continuing from the steps above. Append this to your server.py file.
 
 @app.route("/logout")
 def logout():
@@ -72,44 +85,32 @@ def logout():
 
 @app.route("/")
 def home():
-    return render_template("home.html", session=session.get('user'), pretty=json.dumps(session.get('user'), indent=4))
+    if 'user' in session:
+        return redirect(url_for('dashboard'))
+    else:
+        return render_template("home.html", session=session.get('user'), indent=4)
 
-# def get_db():
-#     """
-#     Configuration method to return db instance
-#     """
-#     db = getattr(g, "_database", None)
-#
-#     if db is None:
-#         db = g._database = PyMongo(current_app).db
-#
-#     return db
-#
-#
-# # Use LocalProxy to read the global db instance with just `db`
-# db = LocalProxy(get_db)
 
 db = PyMongo(app).db
 
 
-@app.route('/select/<string:id>', methods=['GET'])
+@app.route('/get_user/<string:id>', methods=['GET'])
 def select(id):
     # Find the user by ObjectId
     user = db.users.find_one({"_id": ObjectId(id)})
 
     if user:
-        user['_id'] = str(user['_id'])  # Convert ObjectId to string for JSON serialization
+        user = serialize_objectid(user)  # Convert ObjectId to string for JSON serialization
         return jsonify({'message': 'success', 'user': user}), 200
     else:
         return jsonify({'message': 'user not found'}), 404
 
 
-@app.route('/update_userinfo/<string:user_id>', methods=['PUT'])
-def update_userinfo(user_id):
-    # Get the JSON data from the request
+@app.route('/update_userinfo/', methods=['PUT'])
+def update_userinfo():
+    user_id = session.get("user")['userinfo']['sub'].split('|')[1]
     data = request.json
 
-    # Ensure that user_id is a valid ObjectId
     if not ObjectId.is_valid(user_id):
         return jsonify({"message": "Invalid user ID format"}), 400
 
@@ -131,6 +132,27 @@ def update_userinfo(user_id):
         data['user_id'] = ObjectId(user_id)  # Reference to the user
         db.users_info.insert_one(data)
         return jsonify({"message": "User information created successfully"}), 201
+
+@app.route('/get_userinfo/', methods=['GET'])
+def get_userinfo():
+
+    user_id = session.get("user")['userinfo']['sub'].split('|')[1]
+
+    if not user_id:
+        return jsonify({"error": "User not logged in."}), 401
+
+    try:
+        # Fetch user information based on user_id
+        user_info = db.users_info.find_one({"user_id": ObjectId(user_id)})
+
+        if user_info:
+            user_info = serialize_objectid(user_info)
+            return jsonify({'message': 'success', 'user_info': user_info}), 200
+        else:
+            return jsonify({"error": "User not found."}), 404
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/api/trs_calculator/', methods=['GET'])
 def get_trs_calculator():
@@ -161,3 +183,26 @@ def get_403b_calculator():
                               sandbox_data["current_salary"],
                               sandbox_data["annual_growth_rate"],
                               sandbox_data["penalty_rate_per_year"]))
+
+
+@app.route('/dashboard')
+def dashboard():
+    if 'user' in session:
+        return render_template('dashboard.html')
+    else:
+        return redirect(url_for('login'))
+
+
+@app.route('/api/chart-data', methods=['GET'])
+def chart_data():
+    # Generate some example data
+    line_data = [random.randint(50, 100) for _ in range(6)]
+    bar_data = [random.randint(20, 60) for _ in range(4)]
+    pie_data = [random.randint(100, 300) for _ in range(3)]
+
+    # Return data as JSON
+    return jsonify({
+        "lineChartData": line_data,
+        "barChartData": bar_data,
+        "pieChartData": pie_data
+    })

@@ -1,0 +1,634 @@
+<!-- templates/dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</head>
+<style>
+    /* For Chrome, Edge, and Safari */
+    ::-webkit-scrollbar {
+        width: 6px; /* Slim width */
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent; /* Hide track */
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #888; /* Scroll thumb color */
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555; /* Thumb color on hover */
+    }
+
+    /* For Firefox */
+    * {
+        scrollbar-width: thin; /* Slim scrollbar */
+        scrollbar-color: #888 transparent; /* Only show thumb color */
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    /* Set the gradient background for the whole page */
+    body {
+        /* Background gradient with a very dark blue (#0a0b2b) near black at the top */
+        background: linear-gradient(to bottom, #0a0b2b, #1a1d4e); /* Gradient background */
+        background-size: cover;
+        background-position: center;
+        color: white;
+        font-family: Arial, sans-serif;
+        min-height: 100vh; /* Ensure full viewport height */
+    }
+
+    /* Style the navbar */
+    .navbar {
+        background-color: rgba(0, 0, 0, 0.3); /* Semi-transparent black background for navbar */
+        padding: 1em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Style the nav links */
+    .navbar button {
+        color: orange; /* Text color for links */
+        text-decoration: none;
+        margin: 0 15px;
+        padding: 10px 15px;
+        font-weight: bold;
+        transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+    }
+
+    /* Hover effect for nav links */
+    .navbar button:hover {
+        background-color: orange; /* Change background on hover */
+        color: black; /* Change text color on hover */
+        border-radius: 5px;
+    }
+</style>
+<body data-bs-theme="dark">
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <button type="button" class="nav-link" data-bs-toggle="modal" data-bs-target="#step1Modal">Employee
+                        Details
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button type="button" class="nav-link" href="#trs-calculator">TRS Calculator</button>
+                </li>
+                <li class="nav-item">
+                    <button type="button" class="nav-link" href="#403b-calculator">403(b) Calculator</button>
+                </li>
+                <li class="nav-item">
+                    <button type="button" class="nav-link" href="#ira-calculator">IRA Calculator</button>
+                </li>
+                <li class="nav-item">
+                    <button type="button" class="nav-link" onclick="window.location.href='/logout'">Logout</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid" id="main-graphs">
+    <div class="row">
+
+        <!-- Main content area for charts -->
+        <main class="ms-sm-auto px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Dashboard</h1>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card bg-light shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Retirement Chart</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-area">
+                                <canvas id="lineChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card bg-light shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Bar Chart</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-area">
+
+                                <canvas id="barChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card bg-light shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Retirement Chart</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-area">
+                                <canvas id="pieChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<div id="alertPlaceholder" style="
+    margin-top: 50px;
+    right: 0px;
+    float: right;
+    width: 30%;
+    position: absolute;
+    top: 15px;
+"></div>
+
+<!-- Personal Info Modal -->
+<div class="modal fade" data-bs-backdrop="static" id="step1Modal" tabindex="-1" aria-labelledby="step1ModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="step1ModalLabel">Personal Information</h1>
+            </div>
+            <div class="modal-body">
+                <div class="form-group mb-3">
+                    <label for="name">Name</label>
+                    <input type="text" class="form-control bg-secondary text-white" id="name" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="dob">Date of Birth</label>
+                    <input type="date" class="form-control bg-secondary text-white" id="dob" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="income">Annual Income</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="income" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-bs-target="#step2Modal" data-bs-toggle="modal">Next</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TRS Modal -->
+<div class="modal fade" id="step2Modal" tabindex="-1" aria-labelledby="step2ModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="step2ModalLabel">TRS Information</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group mb-3">
+                    <label for="currentYearsService">Current Years of Service</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="currentYearsService">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="expectedRetirementAge">Expected Retirement Age</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="expectedRetirementAge">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="currentSalary">Current Salary</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="currentSalary">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="annualGrowthRate">Annual Growth Rate</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="annualGrowthRate"
+                           step="0.01">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="penaltyRatePerYear">Penalty Rate per Year (if applicable)</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="penaltyRatePerYear"
+                           value="0.06" step="0.01">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="trsMultiplier">TRS Multiplier</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="trsMultiplier"
+                           value="0.023" step="0.001">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-target="#step1Modal" data-bs-toggle="modal">Previous</button>
+                <button class="btn btn-primary" data-bs-target="#step3Modal" data-bs-toggle="modal">Next</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 403b Modal -->
+<div class="modal fade" id="step3Modal" tabindex="-1" aria-labelledby="step3ModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="step3ModalLabel">403b Information</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group mb-3">
+                    <label for="currentAge403b">Current Age</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="currentAge403b">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="retirementAge403b">Retirement Age</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="retirementAge403b">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="currentBalance403b">Current Balance</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="currentBalance403b"
+                           step="0.01">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="currentSalary403b">Current Salary</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="currentSalary403b">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="annualContributionPercentage">Annual Contribution Percentage</label>
+                    <input type="number" class="form-control bg-secondary text-white"
+                           id="annualContributionPercentage" step="0.01">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="employerMatchPercentage">Employer Match Percentage</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="employerMatchPercentage"
+                           step="0.01">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="expectedAnnualReturn">Expected Annual Return</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="expectedAnnualReturn"
+                           value="0.06" step="0.01">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="annualSalaryGrowthRate">Annual Salary Growth Rate</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="annualSalaryGrowthRate"
+                           value="0.0026" step="0.0001">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="annualInvestmentFeeRate">Annual Investment Fee Rate</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="annualInvestmentFeeRate"
+                           value="0.0015" step="0.0001">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="maxOut">Max Out</label>
+                    <input type="checkbox" class="form-check-input" id="maxOut">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-target="#step2Modal" data-bs-toggle="modal">Previous</button>
+                <button class="btn btn-primary" data-bs-target="#step4Modal" data-bs-toggle="modal">Next</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- IRA Modal -->
+<div class="modal fade" id="step4Modal" tabindex="-1" aria-labelledby="step4ModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="step4ModalLabel">IRA Information</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group mb-3">
+                    <label for="currentAgeIra">Current Age</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="currentAgeIra">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="retirementAgeIra">Retirement Age</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="retirementAgeIra">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="currentBalanceIra">Current Balance</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="currentBalanceIra"
+                           step="0.01">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="currentSalaryIra">Current Salary</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="currentSalaryIra">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="annualContributionPercentage">Annual Contribution Percentage</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="annualContributionPercentage"
+                           step="0.01">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="employerMatchPercentage">Employer Match Percentage</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="employerMatchPercentage"
+                           step="0.01">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="expectedAnnualReturn">Expected Annual Return</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="expectedAnnualReturn"
+                           value="0.06" step="0.01">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="annualSalaryGrowthRate">Annual Salary Growth Rate</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="annualSalaryGrowthRate"
+                           value="0.0026" step="0.0001">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="annualInvestmentFeeRate">Annual Investment Fee Rate</label>
+                    <input type="number" class="form-control bg-secondary text-white" id="annualInvestmentFeeRate"
+                           value="0.0015" step="0.0001">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="maxOut">Max Out</label>
+                    <input type="checkbox" class="form-check-input" id="maxOut">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-target="#step2Modal" data-bs-toggle="modal">Previous</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function gatherAndSendData() {
+        // Collect personal info
+        const personalInfo = {
+            name: document.getElementById('name').value,
+            dob: document.getElementById('dob').value,
+            income: parseFloat(document.getElementById('income').value),
+        };
+
+        // Collect TRS data
+        const trs = {
+            currentYearsService: parseFloat(document.getElementById('currentYearsService').value),
+            expectedRetirementAge: parseFloat(document.getElementById('expectedRetirementAge').value),
+            currentSalary: parseFloat(document.getElementById('currentSalary').value),
+            annualGrowthRate: parseFloat(document.getElementById('annualGrowthRate').value),
+            penaltyRatePerYear: parseFloat(document.getElementById('penaltyRatePerYear').value),
+            trsMultiplier: parseFloat(document.getElementById('trsMultiplier').value),
+        };
+
+        // Collect 403b data
+        const b403 = {
+            currentAge: parseFloat(document.getElementById('currentAge403b').value),
+            retirementAge: parseFloat(document.getElementById('retirementAge403b').value),
+            currentBalance: parseFloat(document.getElementById('currentBalance403b').value),
+            currentSalary: parseFloat(document.getElementById('currentSalary403b').value),
+            annualContributionPercentage: parseFloat(document.getElementById('annualContributionPercentage').value),
+            employerMatchPercentage: parseFloat(document.getElementById('employerMatchPercentage').value),
+            expectedAnnualReturn: parseFloat(document.getElementById('expectedAnnualReturn').value),
+            annualSalaryGrowthRate: parseFloat(document.getElementById('annualSalaryGrowthRate').value),
+            annualInvestmentFeeRate: parseFloat(document.getElementById('annualInvestmentFeeRate').value),
+            maxOut: document.getElementById('maxOut').checked,
+        };
+
+        // Collect IRA data
+        const ira = {
+            currentAge: parseFloat(document.getElementById('currentAgeIra').value),
+            retirementAge: parseFloat(document.getElementById('retirementAgeIra').value),
+            currentBalance: parseFloat(document.getElementById('currentBalanceIra').value),
+            currentSalary: parseFloat(document.getElementById('currentSalaryIra').value),
+            annualContributionPercentage: parseFloat(document.getElementById('annualContributionPercentage').value),
+            employerMatchPercentage: parseFloat(document.getElementById('employerMatchPercentage').value),
+            expectedAnnualReturn: parseFloat(document.getElementById('expectedAnnualReturn').value),
+            annualSalaryGrowthRate: parseFloat(document.getElementById('annualSalaryGrowthRate').value),
+            annualInvestmentFeeRate: parseFloat(document.getElementById('annualInvestmentFeeRate').value),
+            maxOut: document.getElementById('maxOut').checked,
+        };
+
+        // Prepare the JSON object
+        const data = {
+            personalInfo,
+            trs,
+            b403,
+            ira,
+        };
+
+        // Send data to Flask backend
+        try {
+            const response = await fetch('/update_userinfo/', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+            if (response.ok) {
+                showAlert('Data saved successfully!', 'success');
+            } else {
+                showAlert('Failed to save data', 'danger');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    // Bind the function to the Finish button
+    document.querySelector('#step4Modal .btn-primary[data-bs-dismiss="modal"]').addEventListener('click', gatherAndSendData);
+</script>
+
+<script>
+    function showAlert(message, type) {
+        // Create a new alert div
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${type} alert-dismissible fade show`;
+        alert.role = 'alert';
+        alert.innerHTML = message + `
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+
+        // Append the alert to the placeholder
+        const alertPlaceholder = document.getElementById('alertPlaceholder');
+        alertPlaceholder.appendChild(alert);
+
+        // Automatically dismiss the alert after a few seconds
+        setTimeout(() => {
+            alert.classList.remove('show');
+            alert.classList.add('fade');
+            alertPlaceholder.removeChild(alert);
+        }, 5000);
+    }
+
+</script>
+
+<script>
+    const lineCtx = document.getElementById('lineChart');
+    const barCtx = document.getElementById('barChart').getContext('2d');
+    const pieCtx = document.getElementById('pieChart').getContext('2d');
+
+    let lineChart = new Chart(lineCtx, {
+        type: 'line',
+        data: {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+            datasets: [{label: 'Sales', data: [], borderColor: 'rgba(75, 192, 192, 1)', fill: false}],
+            options: {
+                maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        left: 10,
+                        right: 25,
+                        top: 25,
+                        bottom: 0
+                    }
+                },
+                scales: {
+                    xAxes: [{
+                        gridLines: {
+                            display: false,
+                            drawBorder: false
+                        }
+                    }],
+                    yAxes: [{
+                        gridLines: {
+                            color: "rgb(234, 236, 244)",
+                            zeroLineColor: "rgb(234, 236, 244)",
+                            drawBorder: false,
+                            borderDash: [2],
+                            zeroLineBorderDash: [2]
+                        }
+                    }],
+                },
+                legend: {
+                    display: true
+                },
+                tooltips: {
+                    backgroundColor: "rgb(255,255,255)",
+                    bodyFontColor: "#858796",
+                    titleMarginBottom: 10,
+                    titleFontColor: '#6e707e',
+                    titleFontSize: 14,
+                    borderColor: '#dddfeb',
+                    borderWidth: 1,
+                    xPadding: 15,
+                    yPadding: 15,
+                    displayColors: false,
+                    intersect: false,
+                    mode: 'index',
+                    caretPadding: 10,
+                    callbacks: {
+                        label: function (tooltipItem, chart) {
+                            var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+                            return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    let barChart = new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Product A', 'Product B', 'Product C', 'Product D'],
+            datasets: [{label: 'Units Sold', data: [], backgroundColor: 'rgba(255, 99, 132, 0.5)'}]
+        }
+    });
+
+    let pieChart = new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Red', 'Blue', 'Yellow'],
+            datasets: [{
+                label: 'Colors',
+                data: [],
+                backgroundColor: ['rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.5)', 'rgba(255, 206, 86, 0.5)']
+            }]
+        }
+    });
+
+</script>
+<script>
+    $(document).ready(function () {
+        // Call the API to check user information
+        $.ajax({
+            url: '/get_userinfo',
+            method: 'GET',
+            success: function (response) {
+                // Check the response message
+                if (response.message === "success") {
+                    const userInfo = response.user_info;
+
+                    // Fill in the Personal Information Modal fields
+                    $('#name').val(userInfo.personalInfo.name);
+                    $('#dob').val(userInfo.personalInfo.dob);
+                    $('#income').val(userInfo.personalInfo.income);
+
+                    // Fill in the TRS Modal fields
+                    $('#currentYearsService').val(userInfo.trs.currentYearsService);
+                    $('#expectedRetirementAge').val(userInfo.trs.expectedRetirementAge);
+                    $('#currentSalary').val(userInfo.trs.currentSalary);
+                    $('#annualGrowthRate').val(userInfo.trs.annualGrowthRate);
+                    $('#penaltyRatePerYear').val(userInfo.trs.penaltyRatePerYear);
+                    $('#trsMultiplier').val(userInfo.trs.trsMultiplier);
+
+                    // Fill in the 403b Modal fields
+                    $('#currentAge403b').val(userInfo.b403.currentAge);
+                    $('#retirementAge403b').val(userInfo.b403.retirementAge);
+                    $('#currentBalance403b').val(userInfo.b403.currentBalance);
+                    $('#currentSalary403b').val(userInfo.b403.currentSalary);
+                    $('#annualContributionPercentage').val(userInfo.b403.annualContributionPercentage);
+                    $('#employerMatchPercentage').val(userInfo.b403.employerMatchPercentage);
+                    $('#expectedAnnualReturn').val(userInfo.b403.expectedAnnualReturn);
+                    $('#annualSalaryGrowthRate').val(userInfo.b403.annualSalaryGrowthRate);
+                    $('#annualInvestmentFeeRate').val(userInfo.b403.annualInvestmentFeeRate);
+                    $('#maxOut').prop('checked', userInfo.b403.maxOut);
+
+                    // Fill in the IRA Modal fields
+                    $('#currentAgeIra').val(userInfo.ira.currentAge);
+                    $('#retirementAgeIra').val(userInfo.ira.retirementAge);
+                    $('#currentBalanceIra').val(userInfo.ira.currentBalance);
+                    $('#currentSalaryIra').val(userInfo.ira.currentSalary);
+                    $('#annualContributionPercentageIra').val(userInfo.ira.annualContributionPercentage);
+                    $('#employerMatchPercentageIra').val(userInfo.ira.employerMatchPercentage);
+                    $('#expectedAnnualReturnIra').val(userInfo.ira.expectedAnnualReturn);
+                    $('#annualSalaryGrowthRateIra').val(userInfo.ira.annualSalaryGrowthRate);
+                    $('#annualInvestmentFeeRateIra').val(userInfo.ira.annualInvestmentFeeRate);
+                    $('#maxOutIra').prop('checked', userInfo.ira.maxOut);
+
+                    // If any essential information is missing, show the relevant modal
+                    if (!userInfo.personalInfo.dob || !userInfo.trs.expectedRetirementAge) {
+                        $('#step1Modal').modal('show');
+                    } else {
+                        // Show the last modal if all information is filled
+                        $('#step4Modal').modal('show');
+                    }
+
+                } else {
+                    console.error("API response was not successful.");
+                }
+            },
+            error: function (xhr, status, error) {
+                $('#step1Modal').modal('show');
+                console.error("Error fetching user information:", error);
+            }
+        });
+    });
+</script>
+
+
+</body>
+</html>
