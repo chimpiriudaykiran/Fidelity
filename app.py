@@ -2,7 +2,7 @@ import os
 import random
 
 from flask import Flask, jsonify, request,redirect,url_for, current_app, g
-from util import trs_retirement_calculator,retirement_403b_calculator, roth_ira_calculator
+from util import trs_retirement_calculator,retirement_403b_calculator, roth_ira_calculator, trad_ira_calculator
 from flask_pymongo import PyMongo
 from werkzeug.local import LocalProxy
 from urllib.parse import quote_plus
@@ -184,22 +184,6 @@ def post_403b_calculator():
                               sandbox_data["current_salary"],
                               sandbox_data["annual_growth_rate"],
                               sandbox_data["penalty_rate_per_year"],
-                              sandbox_data["annual_contribution_percentage"],
-                              sandbox_data["employer_match_percentage"],
-                              sandbox_data["expected_annual_return"],
-                              sandbox_data["annual_salary_growth_rate"],
-                              sandbox_data["annual_investment_fee_rate"],
-                              sandbox_data["max_out"])
-    return jsonify(result)
-
-@app.route('/api/403b_calculator/', methods=['POST'])
-def post_403b_calculator():
-    # TODO: Look for data if exists, update, else create
-    sandbox_data=request.json
-    result=retirement_403b_calculator(sandbox_data["current_age"],
-                              sandbox_data["retirement_age"],
-                              sandbox_data["current_balance"],
-                              sandbox_data["current_salary"],
                               sandbox_data["annual_contribution_percentage"],
                               sandbox_data["employer_match_percentage"],
                               sandbox_data["expected_annual_return"],
