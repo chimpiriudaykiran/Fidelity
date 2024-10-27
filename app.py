@@ -154,6 +154,14 @@ def get_userinfo():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/dashboard')
+def dashboard():
+    if 'user' in session:
+        return render_template('dashboard.html')
+    else:
+        return redirect(url_for('login'))
+
+#functional End Points
 @app.route('/api/trs_calculator/', methods=['GET'])
 def get_trs_calculator():
     # FETCH data from db, if doesn't exists, redirect to data creation page
@@ -184,38 +192,16 @@ def post_403b_calculator():
                               sandbox_data["max_out"])
     return jsonify(result)
 
-
-@app.route('/dashboard')
-def dashboard():
-    if 'user' in session:
-        return render_template('dashboard.html')
-    else:
-        return redirect(url_for('login'))
-                
-
-@app.route('/post_roth_ira_calculate', methods=['POST'])
-def post_roth_ira_calculate():
-    starting_balance = float(request.form['starting_balance'])
-    annual_contribution = float(request.form['annual_contribution'])
-    current_age = int(request.form['current_age'])
-    retirement_age = int(request.form['retirement_age'])
-    rate_of_return = float(request.form['rate_of_return'])
-    tax_rate = float(request.form['tax_rate'])
-    maximize_contributions = 'maximize_contributions' in request.form
-
-    balances, total_contributions, ira_total_at_retirement, taxable_amount = roth_ira_calculator(
-        starting_balance,
-        annual_contribution,
-        current_age,
-        retirement_age,
-        rate_of_return,
-        tax_rate,
-        maximize_contributions
-    )
-
-    return jsonify({
-        'balances': balances,
-        'total_contributions': total_contributions,
-        'ira_total_at_retirement': ira_total_at_retirement,
-        'taxable_amount': taxable_amount
-    })    
+@app.route('/api/ira_roth_calculator/', methods=['POST'])
+def get_irs_roth_calculator():
+    sandbox_data=request.json
+    result=roth_ira_calculator(sandbox_data["current_age"],
+                              sandbox_data["retirement_age"],
+                              sandbox_data["current_balance"],
+                              sandbox_data["current_salary"],
+                              sandbox_data["annual_contribution_percentage"],
+                              sandbox_data["expected_annual_return"],
+                              sandbox_data["annual_salary_growth_rate"],
+                              sandbox_data["annual_tax_rate"],
+                              sandbox_data["max_out"])
+    return jsonify(result)   
